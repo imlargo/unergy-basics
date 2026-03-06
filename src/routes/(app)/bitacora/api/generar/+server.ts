@@ -63,7 +63,15 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ error: 'Respuesta vacía de la IA.' }, { status: 502 });
 	}
 
-	const bitacora = JSON.parse(content);
+	let bitacora;
+	try {
+		bitacora = JSON.parse(content);
+	} catch {
+		return json(
+			{ error: 'La IA generó una respuesta inválida. Por favor intente nuevamente.' },
+			{ status: 502 }
+		);
+	}
 
 	return json({ bitacora });
 };

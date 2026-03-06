@@ -25,7 +25,7 @@
 		if (!SpeechRecognition) return;
 
 		reconocimiento = new SpeechRecognition();
-		reconocimiento.lang = 'es-CO';
+		reconocimiento.lang = 'es';
 		reconocimiento.continuous = true;
 		reconocimiento.interimResults = true;
 
