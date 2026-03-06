@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { SYSTEM_PROMPT, MERGE_PROMPT } from '$lib/features/bitacora/prompt';
+import { SYSTEM_PROMPT, MERGE_PROMPT, ACTA_FINAL_PROMPT } from '$lib/features/bitacora/prompt';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -13,14 +13,17 @@ export const POST: RequestHandler = async ({ request }) => {
 	const body = await request.json();
 	const { texto, modo, bitacoras } = body as {
 		texto?: string;
-		modo: 'generar' | 'merge';
+		modo: 'generar' | 'merge' | 'acta';
 		bitacoras?: unknown[];
 	};
 
 	let userMessage: string;
 	let systemPrompt: string;
 
-	if (modo === 'merge' && bitacoras) {
+	if (modo === 'acta' && bitacoras) {
+		systemPrompt = ACTA_FINAL_PROMPT;
+		userMessage = `Genera un Acta Final a partir de las siguientes ${bitacoras.length} bitácoras de visita:\n\n${JSON.stringify(bitacoras, null, 2)}`;
+	} else if (modo === 'merge' && bitacoras) {
 		systemPrompt = MERGE_PROMPT;
 		userMessage = `Combina las siguientes bitácoras en una sola:\n\n${JSON.stringify(bitacoras, null, 2)}`;
 	} else if (texto) {
@@ -63,9 +66,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ error: 'Respuesta vacía de la IA.' }, { status: 502 });
 	}
 
-	let bitacora;
+	let resultado;
 	try {
-		bitacora = JSON.parse(content);
+		resultado = JSON.parse(content);
 	} catch {
 		return json(
 			{ error: 'La IA generó una respuesta inválida. Por favor intente nuevamente.' },
@@ -73,5 +76,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 
-	return json({ bitacora });
+	if (modo === 'acta') {
+		return json({ acta: resultado });
+	}
+
+	return json({ bitacora: resultado });
 };

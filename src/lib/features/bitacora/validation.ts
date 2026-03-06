@@ -1,56 +1,83 @@
-import type { Warning, Bitacora } from './types';
+import type { Warning, Bitacora, CampoStatus } from './types';
 
 interface CampoRequerido {
 	ruta: string;
 	nombre: string;
+	label: string;
 	descripcion: string;
+	seccion: string;
 }
 
 const CAMPOS_REQUERIDOS: CampoRequerido[] = [
 	{
 		ruta: 'visitador',
-		nombre: 'Visitador',
-		descripcion: 'Nombre de la persona que realizó la visita'
+		nombre: 'visitador',
+		label: 'Visitador',
+		descripcion: 'Nombre de la persona que realizó la visita',
+		seccion: 'General'
 	},
 	{
 		ruta: 'ubicacion.direccion',
-		nombre: 'Dirección',
-		descripcion: 'Dirección o ubicación del terreno visitado'
+		nombre: 'direccion',
+		label: 'Dirección',
+		descripcion: 'Dirección o ubicación del terreno visitado',
+		seccion: 'Ubicación'
 	},
 	{
 		ruta: 'ubicacion.municipio',
-		nombre: 'Municipio',
-		descripcion: 'Municipio donde se encuentra el terreno'
+		nombre: 'municipio',
+		label: 'Municipio',
+		descripcion: 'Municipio donde se encuentra el terreno',
+		seccion: 'Ubicación'
+	},
+	{
+		ruta: 'ubicacion.departamento',
+		nombre: 'departamento',
+		label: 'Departamento',
+		descripcion: 'Departamento donde se encuentra el terreno',
+		seccion: 'Ubicación'
 	},
 	{
 		ruta: 'condiciones_terreno.topografia',
-		nombre: 'Topografía',
-		descripcion: 'Descripción de la topografía del terreno'
+		nombre: 'topografia',
+		label: 'Topografía',
+		descripcion: 'Descripción de la topografía del terreno',
+		seccion: 'Terreno'
 	},
 	{
 		ruta: 'condiciones_terreno.acceso',
-		nombre: 'Acceso al terreno',
-		descripcion: 'Cómo se accede al terreno'
+		nombre: 'acceso',
+		label: 'Acceso al terreno',
+		descripcion: 'Cómo se accede al terreno',
+		seccion: 'Terreno'
 	},
 	{
 		ruta: 'condiciones_terreno.area_aproximada',
-		nombre: 'Área aproximada',
-		descripcion: 'Área aproximada del terreno'
+		nombre: 'area_aproximada',
+		label: 'Área aproximada',
+		descripcion: 'Área aproximada del terreno',
+		seccion: 'Terreno'
 	},
 	{
 		ruta: 'infraestructura.servicios_publicos',
-		nombre: 'Servicios públicos',
-		descripcion: 'Disponibilidad de servicios públicos (agua, luz, etc.)'
+		nombre: 'servicios_publicos',
+		label: 'Servicios públicos',
+		descripcion: 'Disponibilidad de servicios públicos (agua, luz, etc.)',
+		seccion: 'Infraestructura'
 	},
 	{
 		ruta: 'viabilidad.evaluacion',
-		nombre: 'Evaluación de viabilidad',
-		descripcion: 'Evaluación general de viabilidad del terreno'
+		nombre: 'evaluacion',
+		label: 'Evaluación de viabilidad',
+		descripcion: 'Evaluación general de viabilidad del terreno',
+		seccion: 'Viabilidad'
 	},
 	{
 		ruta: 'viabilidad.observaciones',
-		nombre: 'Observaciones de viabilidad',
-		descripcion: 'Observaciones sobre la viabilidad del terreno'
+		nombre: 'observaciones',
+		label: 'Observaciones de viabilidad',
+		descripcion: 'Observaciones sobre la viabilidad del terreno',
+		seccion: 'Viabilidad'
 	}
 ];
 
@@ -63,6 +90,26 @@ function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
 	}, obj);
 }
 
+export function obtenerStatusCampos(bitacora: Bitacora): CampoStatus[] {
+	return CAMPOS_REQUERIDOS.map((campo) => {
+		const valor = getNestedValue(bitacora as unknown as Record<string, unknown>, campo.ruta);
+		const valorStr = typeof valor === 'string' ? valor.trim() : '';
+		const completo =
+			campo.ruta === 'viabilidad.evaluacion'
+				? valorStr !== '' && valorStr !== 'pendiente'
+				: valorStr !== '';
+
+		return {
+			nombre: campo.nombre,
+			label: campo.label,
+			completo,
+			valor: valorStr,
+			descripcion: campo.descripcion,
+			seccion: campo.seccion
+		};
+	});
+}
+
 export function validarBitacora(bitacora: Bitacora): Warning[] {
 	const warnings: Warning[] = [];
 
@@ -71,7 +118,7 @@ export function validarBitacora(bitacora: Bitacora): Warning[] {
 
 		if (!valor || (typeof valor === 'string' && valor.trim() === '')) {
 			warnings.push({
-				campo: campo.nombre,
+				campo: campo.label,
 				mensaje: `Falta información: ${campo.descripcion}`,
 				severidad: 'warning'
 			});

@@ -75,6 +75,7 @@
 	function enviar() {
 		if (texto.trim() && !loading) {
 			onsubmit(texto.trim());
+			texto = '';
 		}
 	}
 
@@ -90,44 +91,50 @@
 	<div class="relative">
 		<Textarea
 			bind:value={texto}
-			placeholder="Describe la visita al terreno... Puedes escribir libremente o usar el micrófono para dictar. (Ctrl+Enter para enviar)"
-			class="min-h-[120px] resize-y pr-12 text-base"
+			placeholder="Describe la visita al terreno... Escribe libremente o usa el micrófono 🎙️"
+			class="min-h-[100px] resize-y pr-24 text-sm leading-relaxed"
 			disabled={loading}
 			onkeydown={handleKeydown}
 		/>
-		{#if soportaVoz}
+		<div class="absolute right-2 bottom-2 flex gap-1">
+			{#if soportaVoz}
+				<Button
+					variant={grabando ? 'destructive' : 'ghost'}
+					size="icon"
+					class="h-8 w-8"
+					onclick={toggleGrabacion}
+					disabled={loading}
+				>
+					{#if grabando}
+						<MicOff class="h-4 w-4" />
+					{:else}
+						<Mic class="h-4 w-4" />
+					{/if}
+				</Button>
+			{/if}
 			<Button
-				variant={grabando ? 'destructive' : 'outline'}
 				size="icon"
-				class="absolute right-2 bottom-2"
-				onclick={toggleGrabacion}
-				disabled={loading}
+				class="h-8 w-8"
+				onclick={enviar}
+				disabled={!texto.trim() || loading}
 			>
-				{#if grabando}
-					<MicOff class="h-4 w-4" />
+				{#if loading}
+					<Loader2 class="h-4 w-4 animate-spin" />
 				{:else}
-					<Mic class="h-4 w-4" />
+					<Send class="h-4 w-4" />
 				{/if}
 			</Button>
-		{/if}
+		</div>
 	</div>
 
 	{#if grabando}
-		<div class="flex items-center gap-2 text-sm text-red-500">
-			<span class="h-2 w-2 animate-pulse rounded-full bg-red-500"></span>
-			Grabando... Habla y tu voz se transcribirá automáticamente.
+		<div class="flex items-center gap-2 text-xs text-red-500">
+			<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500"></span>
+			Grabando — habla y tu voz se transcribirá automáticamente
 		</div>
 	{/if}
 
-	<div class="flex justify-end">
-		<Button onclick={enviar} disabled={!texto.trim() || loading} class="gap-2">
-			{#if loading}
-				<Loader2 class="h-4 w-4 animate-spin" />
-				Procesando...
-			{:else}
-				<Send class="h-4 w-4" />
-				Generar bitácora
-			{/if}
-		</Button>
-	</div>
+	<p class="text-muted-foreground text-xs">
+		Ctrl+Enter para enviar · Puedes ser informal, la IA organizará todo
+	</p>
 </div>

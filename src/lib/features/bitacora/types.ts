@@ -31,6 +31,15 @@ export interface Warning {
 	severidad: 'info' | 'warning' | 'error';
 }
 
+export interface CampoStatus {
+	nombre: string;
+	label: string;
+	completo: boolean;
+	valor: string;
+	descripcion: string;
+	seccion: string;
+}
+
 export interface Bitacora {
 	id: string;
 	fecha: string;
@@ -41,6 +50,22 @@ export interface Bitacora {
 	viabilidad: Viabilidad;
 	observaciones_generales: string;
 	warnings: Warning[];
+}
+
+export interface ActaFinal {
+	id: string;
+	fecha_generacion: string;
+	titulo: string;
+	resumen_ejecutivo: string;
+	ubicacion: Ubicacion;
+	condiciones_terreno: CondicionesTerreno;
+	infraestructura: Infraestructura;
+	viabilidad: Viabilidad;
+	hallazgos_clave: string[];
+	riesgos_identificados: string[];
+	conclusion: string;
+	proximos_pasos: string[];
+	bitacoras_fuente: string[];
 }
 
 export function crearBitacoraVacia(): Bitacora {

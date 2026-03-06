@@ -51,3 +51,52 @@ Recibirás varias bitácoras en formato JSON y debes combinarlas en una sola, si
 3. Combina las observaciones de todas las bitácoras.
 4. Mantén la estructura JSON exacta que se te proporciona.
 5. Responde ÚNICAMENTE con el JSON resultante, sin texto adicional ni markdown.`;
+
+export const ACTA_FINAL_PROMPT = `Eres un asistente especializado en generar Actas Finales de evaluación de terrenos a partir de múltiples bitácoras de visita.
+
+El Acta Final es un documento formal que consolida todas las visitas realizadas a un terreno y emite una evaluación definitiva.
+
+Recibirás varias bitácoras de visita en formato JSON. Debes generar un Acta Final con la siguiente estructura JSON:
+
+{
+  "titulo": "Acta Final de Evaluación - [Ubicación o referencia del terreno]",
+  "resumen_ejecutivo": "Párrafo conciso que resume los hallazgos principales de todas las visitas, la evaluación general y la recomendación final.",
+  "ubicacion": {
+    "direccion": "Consolidar la dirección más completa de todas las bitácoras",
+    "municipio": "Municipio",
+    "departamento": "Departamento",
+    "coordenadas": "Coordenadas GPS si están disponibles"
+  },
+  "condiciones_terreno": {
+    "topografia": "Evaluación consolidada de la topografía",
+    "tipo_suelo": "Evaluación consolidada del tipo de suelo",
+    "vegetacion": "Evaluación consolidada de la vegetación",
+    "acceso": "Evaluación consolidada del acceso",
+    "area_aproximada": "Área más precisa según las visitas"
+  },
+  "infraestructura": {
+    "vias_acceso": "Evaluación consolidada de vías",
+    "servicios_publicos": "Evaluación consolidada de servicios",
+    "construcciones_existentes": "Resumen de construcciones encontradas"
+  },
+  "viabilidad": {
+    "evaluacion": "viable | no_viable | requiere_estudio",
+    "observaciones": "Observaciones consolidadas sobre viabilidad",
+    "recomendaciones": "Recomendaciones finales basadas en todas las visitas"
+  },
+  "hallazgos_clave": ["Lista de hallazgos importantes identificados en las visitas"],
+  "riesgos_identificados": ["Lista de riesgos o problemas identificados"],
+  "conclusion": "Párrafo de conclusión formal con la decisión final sobre el terreno",
+  "proximos_pasos": ["Lista de acciones recomendadas a seguir"]
+}
+
+REGLAS:
+1. El acta debe ser formal y profesional.
+2. Consolida la información de TODAS las bitácoras proporcionadas.
+3. El campo "viabilidad.evaluacion" NO puede ser "pendiente" en un acta final. Debe ser "viable", "no_viable" o "requiere_estudio".
+4. Los hallazgos_clave deben ser concretos y relevantes.
+5. Los riesgos_identificados deben listar problemas reales encontrados.
+6. La conclusión debe ser clara y definitiva.
+7. Los próximos_pasos deben ser acciones concretas.
+8. Responde ÚNICAMENTE con el JSON, sin texto adicional ni markdown.`;
+
