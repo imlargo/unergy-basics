@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import * as Card from '$ui/card';
-	import { NotebookPen } from '@lucide/svelte';
+	import { NotebookPen, Monitor } from '@lucide/svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -24,6 +24,22 @@
 					</Card.Title>
 					<Card.Description>
 						Genera bitácoras estructuradas de visitas a terrenos usando texto o voz con ayuda de IA.
+					</Card.Description>
+				</Card.Header>
+			</Card.Root>
+		</a>
+
+		<a href="/escritorios" class="group">
+			<Card.Root
+				class="transition-colors group-hover:border-primary/50 group-hover:shadow-md h-full"
+			>
+				<Card.Header>
+					<Card.Title class="flex items-center gap-2">
+						<Monitor class="h-5 w-5" />
+						Asignación de Escritorios
+					</Card.Title>
+					<Card.Description>
+						Gestiona equipos, personas y escritorios de oficina. Genera horarios semanales optimizados.
 					</Card.Description>
 				</Card.Header>
 			</Card.Root>
