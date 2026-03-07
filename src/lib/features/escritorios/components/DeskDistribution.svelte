@@ -187,7 +187,6 @@
 								<!-- Weekly occupant strip -->
 								<div class="flex gap-1">
 									{#each days as day}
-										{@const occupant = getPersonForDesk(desk.id)}
 										{@const dayAssignments = store.getAssignmentsForDesk(desk.id, day)}
 										{@const dayPerson = dayAssignments.length > 0 ? store.getPerson(dayAssignments[0].personId) : null}
 										{@const dayTeam = dayPerson ? store.getTeam(dayPerson.teamId) : null}
