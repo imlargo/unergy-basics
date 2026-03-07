@@ -11,11 +11,12 @@
 	let newLabel = $state('');
 	let newRow = $state(0);
 	let newCol = $state(0);
+	let newCapacity = $state(1);
 
 	function handleAdd() {
 		const label = newLabel.trim();
 		if (!label) return;
-		store.addDesk(label, newRow, newCol);
+		store.addDesk(label, newRow, newCol, newCapacity);
 		newLabel = '';
 		newCol++;
 	}
@@ -78,6 +79,17 @@
 					class="h-8 w-full rounded-lg border border-border/60 bg-card/50 px-2 text-center text-sm"
 				/>
 			</div>
+			<div class="w-24">
+				<label for="desk-capacity" class="mb-1 block text-xs font-medium text-muted-foreground">Capacidad</label>
+				<input
+					id="desk-capacity"
+					type="number"
+					min="1"
+					max="10"
+					bind:value={newCapacity}
+					class="h-8 w-full rounded-lg border border-border/60 bg-card/50 px-2 text-center text-sm"
+				/>
+			</div>
 			<Button size="sm" onclick={handleAdd} class="h-8 gap-1.5">
 				<Plus class="h-3.5 w-3.5" />
 				Agregar
@@ -102,6 +114,9 @@
 									>
 										<Monitor class="mb-0.5 h-4 w-4 text-primary" />
 										<span class="text-xs font-bold">{cell.label}</span>
+										{#if cell.capacity > 1}
+											<span class="text-[9px] text-muted-foreground">×{cell.capacity}</span>
+										{/if}
 									</div>
 								{:else}
 									<div class="h-16 w-22 rounded-xl border border-dashed border-border/20"></div>
@@ -121,6 +136,9 @@
 						<Monitor class="h-4 w-4 text-primary" />
 					</div>
 					<span class="flex-1 text-sm font-semibold">{desk.label}</span>
+					<Badge variant="outline" class="text-[10px]">
+						{desk.capacity === 1 ? '1 persona' : `${desk.capacity} personas`}
+					</Badge>
 					<Badge variant="secondary" class="text-xs">
 						Fila {desk.row}, Col {desk.col}
 					</Badge>

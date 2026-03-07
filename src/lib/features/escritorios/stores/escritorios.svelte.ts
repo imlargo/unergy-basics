@@ -53,8 +53,8 @@ class EscritoriosStore {
 	}
 
 	// --- Desks ---
-	addDesk(label: string, row: number, col: number) {
-		this.desks.push({ id: uid('d'), label, row, col });
+	addDesk(label: string, row: number, col: number, capacity: number = 1) {
+		this.desks.push({ id: uid('d'), label, row, col, capacity: Math.max(1, capacity) });
 	}
 
 	removeDesk(id: string) {
@@ -68,6 +68,7 @@ class EscritoriosStore {
 			if (data.label !== undefined) desk.label = data.label;
 			if (data.row !== undefined) desk.row = data.row;
 			if (data.col !== undefined) desk.col = data.col;
+			if (data.capacity !== undefined) desk.capacity = Math.max(1, data.capacity);
 		}
 	}
 
@@ -110,23 +111,33 @@ class EscritoriosStore {
 
 	getDeskOccupancyRate(deskId: string): number {
 		if (!this.schedule) return 0;
+		const desk = this.getDesk(deskId);
+		if (!desk) return 0;
 		const days: DayOfWeek[] = [0, 1, 2, 3, 4];
-		const occupied = days.filter((d) =>
-			this.schedule!.days[d].some((a) => a.deskId === deskId)
-		).length;
-		return occupied / 5;
+		let totalSlots = 0;
+		let occupied = 0;
+		for (const d of days) {
+			totalSlots += desk.capacity;
+			occupied += this.schedule!.days[d].filter((a) => a.deskId === deskId).length;
+		}
+		return totalSlots > 0 ? occupied / totalSlots : 0;
 	}
 
 	getOverallOccupancyRate(): number {
 		if (!this.schedule) return 0;
 		const days: DayOfWeek[] = [0, 1, 2, 3, 4];
-		const totalSlots = this.desks.length * 5;
+		const totalCapacity = this.desks.reduce((sum, d) => sum + d.capacity, 0);
+		const totalSlots = totalCapacity * 5;
 		if (totalSlots === 0) return 0;
 		let occupied = 0;
 		for (const day of days) {
 			occupied += this.schedule.days[day].length;
 		}
 		return occupied / totalSlots;
+	}
+
+	getTotalCapacity(): number {
+		return this.desks.reduce((sum, d) => sum + d.capacity, 0);
 	}
 
 	getScheduleValidation(): { valid: boolean; issues: string[] } {

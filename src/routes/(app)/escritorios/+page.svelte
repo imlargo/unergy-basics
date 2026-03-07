@@ -53,7 +53,7 @@
 				<LayoutGrid class="h-4 w-4 text-fuchsia-500" />
 			</div>
 			<div>
-				<p class="text-lg font-bold">{store.desks.length}</p>
+				<p class="text-lg font-bold">{store.desks.length} <span class="text-xs font-normal text-muted-foreground">({store.getTotalCapacity()} puestos)</span></p>
 				<p class="text-xs text-muted-foreground">Escritorios</p>
 			</div>
 		</div>

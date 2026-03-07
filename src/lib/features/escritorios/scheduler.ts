@@ -4,13 +4,21 @@ const WORK_DAYS: DayOfWeek[] = [0, 1, 2, 3, 4];
 const MIN_DAYS_PER_PERSON = 3;
 
 /**
+ * Returns total capacity across all desks (sum of each desk's capacity).
+ */
+function totalCapacity(desks: Desk[]): number {
+	return desks.reduce((sum, d) => sum + d.capacity, 0);
+}
+
+/**
  * Generates a weekly desk assignment schedule.
  *
  * Rules:
  * 1. Each person must attend at least MIN_DAYS_PER_PERSON days.
  * 2. People from the same team should be assigned to nearby desks.
  * 3. Respect each person's unavailable days.
- * 4. No more people assigned per day than available desks.
+ * 4. No more people assigned per day than total desk capacity.
+ * 5. Each desk can hold up to its capacity number of people.
  */
 export function generateSchedule(
 	people: Person[],
@@ -23,7 +31,7 @@ export function generateSchedule(
 
 	if (people.length === 0 || desks.length === 0) return schedule;
 
-	const maxPerDay = desks.length;
+	const maxPerDay = totalCapacity(desks);
 
 	// Calculate available days for each person
 	const personAvailability = people.map((p) => ({
@@ -67,7 +75,7 @@ export function generateSchedule(
 		}
 	}
 
-	// Phase 3: Assign desks for each day, grouping by team
+	// Phase 3: Assign desks for each day, grouping by team and respecting capacity
 	for (const day of WORK_DAYS) {
 		const dayPeople = sorted
 			.filter((e) => e.assignedDays.includes(day))
@@ -87,13 +95,24 @@ export function generateSchedule(
 			ordered.push(...teamPeople);
 		}
 
-		// Assign to sorted desks in order
-		const assignments: DayAssignment[] = ordered
-			.slice(0, maxPerDay)
-			.map((person, idx) => ({
+		// Assign to sorted desks respecting capacity
+		const assignments: DayAssignment[] = [];
+		const deskSlots = sortedDesks.map((d) => ({ desk: d, remaining: d.capacity }));
+		let deskIdx = 0;
+
+		for (const person of ordered) {
+			// Find next desk with remaining capacity
+			while (deskIdx < deskSlots.length && deskSlots[deskIdx].remaining <= 0) {
+				deskIdx++;
+			}
+			if (deskIdx >= deskSlots.length) break;
+
+			assignments.push({
 				personId: person.id,
-				deskId: sortedDesks[idx].id
-			}));
+				deskId: deskSlots[deskIdx].desk.id
+			});
+			deskSlots[deskIdx].remaining--;
+		}
 
 		schedule.days[day] = assignments;
 	}

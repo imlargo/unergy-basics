@@ -19,6 +19,8 @@ export interface Desk {
 	row: number;
 	/** Column position in office layout */
 	col: number;
+	/** Number of people that can sit at this desk (default 1) */
+	capacity: number;
 }
 
 export type DayOfWeek = 0 | 1 | 2 | 3 | 4;

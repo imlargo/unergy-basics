@@ -28,12 +28,12 @@ export const MOCK_PEOPLE: Person[] = [
 ];
 
 export const MOCK_DESKS: Desk[] = [
-	{ id: 'd-1', label: 'A1', row: 0, col: 0 },
-	{ id: 'd-2', label: 'A2', row: 0, col: 1 },
-	{ id: 'd-3', label: 'A3', row: 0, col: 2 },
-	{ id: 'd-4', label: 'B1', row: 1, col: 0 },
-	{ id: 'd-5', label: 'B2', row: 1, col: 1 },
-	{ id: 'd-6', label: 'B3', row: 1, col: 2 },
-	{ id: 'd-7', label: 'C1', row: 2, col: 0 },
-	{ id: 'd-8', label: 'C2', row: 2, col: 1 }
+	{ id: 'd-1', label: 'A1', row: 0, col: 0, capacity: 1 },
+	{ id: 'd-2', label: 'A2', row: 0, col: 1, capacity: 2 },
+	{ id: 'd-3', label: 'A3', row: 0, col: 2, capacity: 1 },
+	{ id: 'd-4', label: 'B1', row: 1, col: 0, capacity: 2 },
+	{ id: 'd-5', label: 'B2', row: 1, col: 1, capacity: 1 },
+	{ id: 'd-6', label: 'B3', row: 1, col: 2, capacity: 1 },
+	{ id: 'd-7', label: 'C1', row: 2, col: 0, capacity: 3 },
+	{ id: 'd-8', label: 'C2', row: 2, col: 1, capacity: 1 }
 ];
