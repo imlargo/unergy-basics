@@ -1,6 +1,6 @@
-import type { Team, Person, Desk, WeeklySchedule } from '../types/index.js';
+import type { Team, Person, Desk, WeeklySchedule, DayOfWeek, DayAssignment } from '../types/index.js';
 import { MOCK_TEAMS, MOCK_PEOPLE, MOCK_DESKS } from '../data/mock.js';
-import { generateSchedule } from '../scheduler.js';
+import { generateSchedule, validateSchedule } from '../scheduler.js';
 
 let nextId = 100;
 function uid(prefix: string): string {
@@ -95,6 +95,59 @@ class EscritoriosStore {
 
 	getPeopleByTeam(teamId: string): Person[] {
 		return this.people.filter((p) => p.teamId === teamId);
+	}
+
+	// --- Schedule helpers ---
+	getAssignmentsForDesk(deskId: string, day: DayOfWeek): DayAssignment[] {
+		if (!this.schedule) return [];
+		return this.schedule.days[day].filter((a) => a.deskId === deskId);
+	}
+
+	getAssignmentsForDay(day: DayOfWeek): DayAssignment[] {
+		if (!this.schedule) return [];
+		return this.schedule.days[day];
+	}
+
+	getDeskOccupancyRate(deskId: string): number {
+		if (!this.schedule) return 0;
+		const days: DayOfWeek[] = [0, 1, 2, 3, 4];
+		const occupied = days.filter((d) =>
+			this.schedule!.days[d].some((a) => a.deskId === deskId)
+		).length;
+		return occupied / 5;
+	}
+
+	getOverallOccupancyRate(): number {
+		if (!this.schedule) return 0;
+		const days: DayOfWeek[] = [0, 1, 2, 3, 4];
+		const totalSlots = this.desks.length * 5;
+		if (totalSlots === 0) return 0;
+		let occupied = 0;
+		for (const day of days) {
+			occupied += this.schedule.days[day].length;
+		}
+		return occupied / totalSlots;
+	}
+
+	getScheduleValidation(): { valid: boolean; issues: string[] } {
+		if (!this.schedule) return { valid: true, issues: [] };
+		return validateSchedule(this.schedule, this.people, this.minDaysPerWeek);
+	}
+
+	getTeamDistributionForDay(day: DayOfWeek): { team: Team; count: number }[] {
+		if (!this.schedule) return [];
+		const assignments = this.schedule.days[day];
+		const teamCounts = new Map<string, number>();
+		for (const a of assignments) {
+			const person = this.getPerson(a.personId);
+			if (person) {
+				teamCounts.set(person.teamId, (teamCounts.get(person.teamId) || 0) + 1);
+			}
+		}
+		return Array.from(teamCounts.entries())
+			.map(([teamId, count]) => ({ team: this.getTeam(teamId)!, count }))
+			.filter((e) => e.team)
+			.sort((a, b) => b.count - a.count);
 	}
 }
 

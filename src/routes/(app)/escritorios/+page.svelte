@@ -3,9 +3,10 @@
 	import PeopleManager from '$lib/features/escritorios/components/PeopleManager.svelte';
 	import DeskManager from '$lib/features/escritorios/components/DeskManager.svelte';
 	import ScheduleView from '$lib/features/escritorios/components/ScheduleView.svelte';
+	import DeskDistribution from '$lib/features/escritorios/components/DeskDistribution.svelte';
 	import * as Tabs from '$ui/tabs';
 	import { Badge } from '$ui/badge';
-	import { Monitor, CalendarDays, Users, User, LayoutGrid } from '@lucide/svelte';
+	import { Monitor, CalendarDays, Users, User, LayoutGrid, MapPin } from '@lucide/svelte';
 	import { escritoriosStore } from '$lib/features/escritorios/stores/escritorios.svelte.js';
 
 	const store = escritoriosStore;
@@ -61,8 +62,8 @@
 				<CalendarDays class="h-4 w-4 text-emerald-500" />
 			</div>
 			<div>
-				<p class="text-lg font-bold">{store.schedule ? '✓' : '—'}</p>
-				<p class="text-xs text-muted-foreground">Horario</p>
+				<p class="text-lg font-bold">{store.schedule ? Math.round(store.getOverallOccupancyRate() * 100) + '%' : '—'}</p>
+				<p class="text-xs text-muted-foreground">Ocupación</p>
 			</div>
 		</div>
 	</div>
@@ -73,6 +74,13 @@
 			<Tabs.Trigger value="schedule" class="gap-1.5">
 				<CalendarDays class="h-3.5 w-3.5" />
 				Horario
+			</Tabs.Trigger>
+			<Tabs.Trigger value="distribution" class="gap-1.5">
+				<MapPin class="h-3.5 w-3.5" />
+				Distribución
+				{#if store.schedule}
+					<Badge variant="secondary" class="ml-1 h-5 px-1.5 text-[10px]">Live</Badge>
+				{/if}
 			</Tabs.Trigger>
 			<Tabs.Trigger value="teams" class="gap-1.5">
 				<Users class="h-3.5 w-3.5" />
@@ -93,6 +101,10 @@
 
 		<Tabs.Content value="schedule">
 			<ScheduleView />
+		</Tabs.Content>
+
+		<Tabs.Content value="distribution">
+			<DeskDistribution />
 		</Tabs.Content>
 
 		<Tabs.Content value="teams">

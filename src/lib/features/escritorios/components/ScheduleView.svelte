@@ -5,7 +5,7 @@
 	import * as Card from '$ui/card';
 	import { Button } from '$ui/button';
 	import { Badge } from '$ui/badge';
-	import { CalendarDays, Sparkles, RefreshCw } from '@lucide/svelte';
+	import { CalendarDays, Sparkles, RefreshCw, AlertTriangle, CheckCircle } from '@lucide/svelte';
 
 	const store = escritoriosStore;
 	const days: DayOfWeek[] = [0, 1, 2, 3, 4];
@@ -86,6 +86,27 @@
 				</Card.Root>
 			{/each}
 		</div>
+
+		<!-- Schedule validation -->
+		{@const validation = store.getScheduleValidation()}
+		{#if validation.valid}
+			<div class="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-3">
+				<CheckCircle class="h-4 w-4 text-emerald-500" />
+				<span class="text-sm font-medium text-emerald-700 dark:text-emerald-400">Horario válido — todas las personas cumplen el mínimo de días</span>
+			</div>
+		{:else}
+			<div class="flex flex-col gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3">
+				<div class="flex items-center gap-2">
+					<AlertTriangle class="h-4 w-4 text-amber-500" />
+					<span class="text-sm font-semibold text-amber-700 dark:text-amber-400">Advertencias del horario</span>
+				</div>
+				<ul class="ml-6 list-disc space-y-0.5">
+					{#each validation.issues as issue}
+						<li class="text-xs text-amber-600 dark:text-amber-400/80">{issue}</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 
 		<!-- Summary table -->
 		<Card.Root class="overflow-hidden border-border/60">
