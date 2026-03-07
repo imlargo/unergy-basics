@@ -154,12 +154,16 @@
 	<!-- Header -->
 	<div>
 		<div class="flex items-center gap-3">
-			<NotebookPen class="h-6 w-6" />
-			<h1 class="text-2xl font-bold tracking-tight">Bitácora de Visitas</h1>
+			<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+				<NotebookPen class="h-5 w-5 text-primary" />
+			</div>
+			<div>
+				<h1 class="text-2xl font-bold tracking-tight">Bitácora de Visitas</h1>
+				<p class="text-sm text-muted-foreground">
+					Describe tu visita por texto o voz. La IA genera la bitácora estructurada.
+				</p>
+			</div>
 		</div>
-		<p class="text-muted-foreground mt-1 text-sm">
-			Describe tu visita por texto o voz. La IA genera la bitácora estructurada.
-		</p>
 	</div>
 
 	<!-- Input Section -->
