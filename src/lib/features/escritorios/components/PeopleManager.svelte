@@ -72,7 +72,7 @@
 				</div>
 			</div>
 			<div>
-				<span class="mb-1 block text-xs font-medium">Días no disponible</span>
+				<span class="mb-1 block text-xs font-medium">Días no disponibles</span>
 				<div class="flex gap-1.5">
 					{#each days as day}
 						<button
